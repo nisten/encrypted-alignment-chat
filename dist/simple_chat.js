@@ -9,7 +9,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _ChatUI_chat, _ChatUI_localChat, _ChatUI_uiChat, _ChatUI_uiChatInput, _ChatUI_uiChatInfoLabel, _ChatUI_config, _ChatUI_selectedModel, _ChatUI_chatLoaded, _ChatUI_requestInProgress, _ChatUI_chatRequestChain;
+var _ChatUI_chat, _ChatUI_localChat, _ChatUI_uiChatInput, _ChatUI_uiChatInfoLabel, _ChatUI_config, _ChatUI_selectedModel, _ChatUI_requestInProgress, _ChatUI_chatRequestChain;
 import appConfig from "./app-config";
 import { ChatModule, ChatRestModule, ChatWorkerClient } from "@mlc-ai/web-llm";
 const getElementAndCheck = (id) => {
@@ -22,19 +22,20 @@ class ChatUI {
     constructor(chat, localChat) {
         _ChatUI_chat.set(this, void 0);
         _ChatUI_localChat.set(this, void 0);
-        _ChatUI_uiChat.set(this, void 0);
         _ChatUI_uiChatInput.set(this, void 0);
         _ChatUI_uiChatInfoLabel.set(this, void 0);
-        _ChatUI_config.set(this, appConfig);
-        _ChatUI_selectedModel.set(this, "");
-        _ChatUI_chatLoaded.set(this, false);
-        _ChatUI_requestInProgress.set(this, false);
-        _ChatUI_chatRequestChain.set(this, Promise.resolve());
+        _ChatUI_config.set(this, void 0);
+        _ChatUI_selectedModel.set(this, void 0);
+        _ChatUI_requestInProgress.set(this, void 0);
+        _ChatUI_chatRequestChain.set(this, void 0);
         __classPrivateFieldSet(this, _ChatUI_chat, chat, "f");
         __classPrivateFieldSet(this, _ChatUI_localChat, localChat, "f");
-        __classPrivateFieldSet(this, _ChatUI_uiChat, getElementAndCheck("chatui-chat"), "f");
         __classPrivateFieldSet(this, _ChatUI_uiChatInput, getElementAndCheck("chatui-input"), "f");
         __classPrivateFieldSet(this, _ChatUI_uiChatInfoLabel, getElementAndCheck("chatui-info-label"), "f");
+        __classPrivateFieldSet(this, _ChatUI_config, appConfig, "f");
+        __classPrivateFieldSet(this, _ChatUI_selectedModel, "", "f");
+        __classPrivateFieldSet(this, _ChatUI_requestInProgress, false, "f");
+        __classPrivateFieldSet(this, _ChatUI_chatRequestChain, Promise.resolve(), "f");
         getElementAndCheck("chatui-reset-btn").onclick = () => this.onReset();
         getElementAndCheck("chatui-send-btn").onclick = () => this.onGenerate();
         __classPrivateFieldGet(this, _ChatUI_uiChatInput, "f").onkeypress = (event) => {
@@ -42,14 +43,17 @@ class ChatUI {
                 this.onGenerate();
         };
         const modelSelector = getElementAndCheck("chatui-select");
-        for (const item of __classPrivateFieldGet(this, _ChatUI_config, "f").model_list) {
+        this.populateDropdown(modelSelector, __classPrivateFieldGet(this, _ChatUI_config, "f").model_list);
+        __classPrivateFieldSet(this, _ChatUI_selectedModel, modelSelector.value, "f");
+        modelSelector.onchange = () => this.onSelectChange(modelSelector);
+    }
+    populateDropdown(modelSelector, modelList) {
+        modelList.forEach((item) => {
             const opt = document.createElement("option");
             opt.value = item.local_id;
             opt.textContent = item.local_id;
             modelSelector.append(opt);
-        }
-        __classPrivateFieldSet(this, _ChatUI_selectedModel, modelSelector.value, "f");
-        modelSelector.onchange = () => this.onSelectChange(modelSelector);
+        });
     }
     pushTask(task) {
         __classPrivateFieldSet(this, _ChatUI_chatRequestChain, __classPrivateFieldGet(this, _ChatUI_chatRequestChain, "f").then(task), "f");
@@ -82,18 +86,14 @@ class ChatUI {
             }
         }
         catch (err) {
-            if (err instanceof Error)
-                console.log(err.stack);
             this.unloadChat();
             __classPrivateFieldSet(this, _ChatUI_requestInProgress, false, "f");
             return;
         }
         __classPrivateFieldSet(this, _ChatUI_requestInProgress, false, "f");
-        __classPrivateFieldSet(this, _ChatUI_chatLoaded, true, "f");
     }
     async unloadChat() {
         await __classPrivateFieldGet(this, _ChatUI_chat, "f").unload();
-        __classPrivateFieldSet(this, _ChatUI_chatLoaded, false, "f");
     }
     async asyncGenerate() {
         await this.asyncInitChat();
@@ -111,20 +111,18 @@ class ChatUI {
             else {
                 output = await __classPrivateFieldGet(this, _ChatUI_chat, "f").generate(prompt);
             }
-            __classPrivateFieldGet(this, _ChatUI_uiChatInfoLabel, "f").textContent = output; // Update UI here
+            __classPrivateFieldGet(this, _ChatUI_uiChatInfoLabel, "f").textContent = output;
         }
         catch (err) {
-            if (err instanceof Error)
-                console.log(err.stack);
             await this.unloadChat();
         }
         __classPrivateFieldSet(this, _ChatUI_requestInProgress, false, "f");
     }
     resetChatHistory() {
-        __classPrivateFieldGet(this, _ChatUI_uiChatInfoLabel, "f").textContent = ""; // Clear UI history here
+        __classPrivateFieldGet(this, _ChatUI_uiChatInfoLabel, "f").textContent = "";
     }
 }
-_ChatUI_chat = new WeakMap(), _ChatUI_localChat = new WeakMap(), _ChatUI_uiChat = new WeakMap(), _ChatUI_uiChatInput = new WeakMap(), _ChatUI_uiChatInfoLabel = new WeakMap(), _ChatUI_config = new WeakMap(), _ChatUI_selectedModel = new WeakMap(), _ChatUI_chatLoaded = new WeakMap(), _ChatUI_requestInProgress = new WeakMap(), _ChatUI_chatRequestChain = new WeakMap();
+_ChatUI_chat = new WeakMap(), _ChatUI_localChat = new WeakMap(), _ChatUI_uiChatInput = new WeakMap(), _ChatUI_uiChatInfoLabel = new WeakMap(), _ChatUI_config = new WeakMap(), _ChatUI_selectedModel = new WeakMap(), _ChatUI_requestInProgress = new WeakMap(), _ChatUI_chatRequestChain = new WeakMap();
 const useWebWorker = appConfig.use_web_worker;
 const chat = useWebWorker ?
     new ChatWorkerClient(new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' })) :

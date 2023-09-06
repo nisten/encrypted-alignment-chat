@@ -1,16 +1,16 @@
-interface ModelConfig {
+export interface ModelConfig {
 	model_url: string;
 	local_id: string;
 	required_features?: string[];
-  }
-  
-  interface AppConfig {
+}
+
+export interface AppConfig {
 	model_list: ModelConfig[];
 	model_lib_map: { [key: string]: string };
 	use_web_worker: boolean;
-  }
-  
-  const appConfig: AppConfig = {
+}
+
+const appConfig: AppConfig = {
 	model_list: [
 	  {
 		model_url: "https://huggingface.co/mlc-ai/mlc-chat-Llama-2-7b-chat-hf-q4f32_1/resolve/main/",
