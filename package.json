@@ -1,11 +1,11 @@
 {
   "name": "electron-quick-start",
   "version": "1.0.0",
-  "type": "module",
+  "type": "commonjs",
   "description": "A minimal Electron application",
-  "main": "dist/main.js",
+  "main": "bootstrap.js",
   "scripts": {
-    "start": "tsc && electron ./main.ts",
+    "start": "tsc && electron ./bootstrap.js",
     "build": "tsc"
   },
   "repository": "https://github.com/electron/electron-quick-start",
@@ -21,7 +21,8 @@
   "dependencies": {
     "@electron/typescript-definitions": "^8.14.5",
     "@mlc-ai/web-llm": "^0.2.8",
-    "electron": "^27.0.0-alpha.5"
+    "electron": "^27.0.0-alpha.5",
+    "esm": "^3.2.25"
   },
   "devDependencies": {
     "@electron/docs-parser": "^1.1.1",

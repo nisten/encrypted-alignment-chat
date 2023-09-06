@@ -1,16 +1,16 @@
-import { ChatModule, ChatRestModule, ChatWorkerClient } from "@mlc-ai/web-llm";
-import appConfig from "./app-config";
+import { app, BrowserWindow } from 'electron';
+import path from 'path';
 
-declare global {
-  interface Window {
-    ChatModule: typeof ChatModule;
-    ChatRestModule: typeof ChatRestModule;
-    ChatWorkerClient: typeof ChatWorkerClient;
-    appConfig: typeof appConfig;
-  }
-}
+const createWindow = (): void => {
+  const mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),  // Change this line
+    },
+  });
 
-window.ChatModule = ChatModule;
-window.ChatRestModule = ChatRestModule;
-window.ChatWorkerClient = ChatWorkerClient;
-window.appConfig = appConfig;
+  mainWindow.loadFile('index.html');
+};
+
+app.whenReady().then(createWindow);
