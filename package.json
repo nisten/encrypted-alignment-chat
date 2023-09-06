@@ -1,0 +1,32 @@
+{
+  "name": "electron-quick-start",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A minimal Electron application",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "tsc && electron ./main.ts",
+    "build": "tsc"
+  },
+  "repository": "https://github.com/electron/electron-quick-start",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "dependencies": {
+    "@electron/typescript-definitions": "^8.14.5",
+    "@mlc-ai/web-llm": "^0.2.8",
+    "electron": "^27.0.0-alpha.5"
+  },
+  "devDependencies": {
+    "@electron/docs-parser": "^1.1.1",
+    "@types/electron": "^1.6.10",
+    "@types/node": "^20.5.9",
+    "typescript": "^5"
+  }
+}
