@@ -120,10 +120,12 @@ class ChatUI {
   }
 }
 
-const useWebWorker = appConfig.use_web_worker;
-const chat: ChatInterface = useWebWorker ? 
-  new ChatWorkerClient(new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' })) :
-  new ChatModule();
-  
-const localChat = new ChatRestModule();
-new ChatUI(chat, localChat);
+document.addEventListener("DOMContentLoaded", (event) => {
+  const useWebWorker = appConfig.use_web_worker;
+  const chat: ChatInterface = useWebWorker ? 
+    new ChatWorkerClient(new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' })) :
+    new ChatModule();
+
+  const localChat = new ChatRestModule();
+  new ChatUI(chat, localChat);
+});
